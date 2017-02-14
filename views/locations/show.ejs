@@ -1,0 +1,176 @@
+<% include ../partials/header %>
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <p class="lead">Winimap</p>
+            <div class="list-group">
+                <a href="/" class="btn btn-default list-group-item" role="button">View world map</a>
+                <a href="/locations" class="btn btn-default list-group-item" role="button">Scan for nearby players</a>
+                <a href="/locations/new" class="btn btn-default list-group-item" role="button">Add new location</a>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="thumbnail">
+                <!-- Game --> 
+                <img class="gameIcon" src=
+                    <% if (location.game === "ss64"){ %>
+                        "/images/games/64_icon.png"
+                        title="Smash 64"
+                    <% } else if (location.game === "ssbm"){ %>
+                        "/images/games/melee_icon.png"
+                        title="Melee"
+                    <% } else if (location.game === "ssbb"){ %>
+                        "/images/games/brawl_icon.png"
+                        title="Brawl"
+                    <% } else if (location.game === "ssbpm"){ %>
+                        "/images/games/pm_icon.png"
+                        title="PM"
+                    <% } else if (location.game === "ssb4"){ %>
+                        "/images/games/smash4_icon.png"
+                        title="Smash 4"
+                    <% } %>
+                >
+                <!-- Google Map -->
+                <div id="map_show" class="img-responsive"></div> 
+                
+                <div class="caption-full">
+                    <h4 class="pull-right">
+                        <%= location.city %>, <%= location.state %><br>
+                        <% if (currentUser){ %>
+                            <span style="font-size: 65%;">(<%= distance %> miles away)</span>
+                        <% } %>
+                    </h4>   
+                    <!-- Seeking Friendlies -->
+                    <% if (location.status === "seeking") { %>
+                        <h4>Seeking Friendlies</h4>
+                        <p>
+                            <%= location.author.tag %> is currently looking for people to play with!<br><br>
+                            <small class="show_note">Please note, visual map marker is only approximate to town. Contact <%= location.author.tag %> or check the info above for exact details.</small>
+                            <h6>Information:</h6>
+                            <pre><%- location.information %></pre>                    
+                        </p>
+                        
+                    <!-- Hosting Friendlies -->
+                    <% } else if (location.status === "hostFriendlies") { %>
+                        <h4>Hosting Friendlies</h4>
+                        <p>
+                            <%= location.author.tag %> is currently hosting casual games!</br></br>
+                            <small class="show_note">Please note, visual map marker is only approximate to town. Contact <%= location.author.tag %> or check the info above for exact details.</small>
+                            <h6>Information:</h6>
+                            <pre><%- location.information %></pre>
+                        </p>
+                        
+                    <!-- Hosting Tournament -->
+                     <% } else if (location.status === "hostTourny") {%>
+                        <h4><%= location.tournyTitle %><span class="tournyPrestige"><%= location.prestige %></span></h4>
+                        <p>
+                            Venue: <b><%= location.address %>, <%= location.city %>, <%= location.state %></b><br>
+                            Tournament Organizer: <b><%= location.author.tag %></b><br>
+                            Start Date: <b><%= location.start %></b><br><br>
+                            <h6>Information:</h6>
+                            <pre><%- location.information %></pre>
+                        </p>
+                    <% } %>  
+                    <p class="pull-right" style="margin: -15px 20px 0 0;"><small><em>Posted by</em> <strong><%= location.author.tag %></strong> <em>on</em> <strong><%= location.created.toLocaleString('en-US', {timeZoneName: "short"}) %></strong></small></p>
+                    <% if(currentUser && location.author.id.equals(currentUser._id)){ %>
+                        <!-- Edit -->
+                        <a class="btn btn-xs btn-warning" href="/locations/<%= location._id %>/edit">
+                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit
+                        </a>
+                        <!-- Delete -->
+                        <form id="delete-form" action="/locations/<%= location._id %>?_method=DELETE" method="POST">
+                            <button class="btn btn-xs btn-danger">
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
+                            </button>
+                        </form>
+                    <% } else if(currentUser && ((new Date(currentUser.lastReportedAt.getTime() + 24*60*60*1000)) <= new Date())){ %>
+                        <!-- Report -->
+                         <a class="btn btn-xs btn-warning" href="/locations/<%= location._id %>/report">
+                                <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> Report
+                        </a>                    
+                    <% } %>
+                </div>
+            </div>
+            
+            <!-- Comments -->
+            <div class="well">
+                <div class="text-right">
+                    <a class="btn btn-success" href="/locations/<%= location._id %>/comments/new">Add New Comment</a>
+                </div>
+                <hr>
+                <% location.comments.forEach(function(comment){ %>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <strong>
+                                <%= comment.author.tag %> <% if (comment.author.id.equals(location.author.id)){ %>(official)<% }else if (currentUser && comment.author.id.equals(currentUser._id)){ %>(you)<% } %>
+                            </strong>
+                            <span class="pull-right"><%= comment.created.toLocaleString('en-US', {timeZoneName: "short"}) %></span>
+                            <p>
+                                <%= comment.text %>
+                            </p>
+                            <% if(currentUser && comment.author.id.equals(currentUser._id)){ %>
+                                <!-- Edit Comment -->
+                                <a class="btn btn-xs btn-warning" href="/locations/<%= location._id %>/comments/<%= comment._id %>/edit">
+                                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit
+                                </a>
+                                <!-- Delete Comment -->
+                                <form id="delete-form" action="/locations/<%= location._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
+                                    <button class="btn btn-xs btn-danger">
+                                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
+                                    </button>
+                                </form>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }) %>                
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<script>
+    var map;
+    var marker;
+    function initMap(){
+        var location = <%- JSON.stringify(location) %>
+        var latLng = new google.maps.LatLng(location.coord.lat, location.coord.lng);
+        map = new google.maps.Map(document.getElementById('map_show'), {
+            zoom: 15,
+            minZoom: 4,
+            center: latLng,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+        
+        marker = new google.maps.Marker({
+           position: latLng,
+           map: map,
+           animation: google.maps.Animation.BOUNCE,
+           icon: getImage()
+        });
+    }
+    
+    function getImage(){
+        var location = <%- JSON.stringify(location) %>
+        if (location.status === "seeking"){
+            return "/images/pins/waiting.png";
+        } else if (location.status === "hostFriendlies"){
+            return "/images/pins/controller.png";
+        } else if (location.status === "hostTourny"){
+            if (location.prestige === "Local Tournament"){
+                return "/images/pins/building.png";
+            } else if (location.prestige === "Regional Tournament"){
+                return "/images/pins/city.png";
+            } else if (location.prestige === "Major"){
+                return "/images/pins/world.png";
+            } else if (location.prestige === "Super Major"){
+                return "/images/pins/star.png";
+            }
+        } else{
+            return "/images/pins/error.png";
+        }
+    }
+</script>    
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhIPCZxFHwypX-_WeRzyoAOXi_ycyQR-0&callback=initMap&libraries=visualization" type="text/javascript"></script>
+
+<% include ../partials/footer %>

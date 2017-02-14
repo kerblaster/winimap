@@ -1,0 +1,127 @@
+<% include ../partials/header %>
+<link rel="stylesheet" href="/stylesheets/forms.css">
+<script type="text/javascript" src="/scripts/countries.js"></script>
+<script type="text/javascript" src="/scripts/locationFormScripts.js"></script>
+
+<div class="container">
+    <div class="row">
+        <h1 style="text-align: center;">Pinpoint a new location</h1>
+        <div style="width: 50%; margin: 25px auto;">
+            <form action="/locations" method="POST">
+                <div class="form-group">
+                    <label>Status:*</label>
+                    <ul>
+                        <li>
+                            <input type="radio" id="seeking" class="requirement" name="status" value="seeking" checked><label for="seeking"> Seeking Friendlies</label>
+                            <fieldset class="conditional">
+                                <div class="form-group smallText">
+                                    Friendlies location is automatically attatched to provided your user information when signing up.
+                                </div> 
+                            </fieldset>                        
+                        </li>
+                        <li>
+                            <input type="radio" id="hostFriendlies" class="requirement" name="status" value="hostFriendlies"><label for="hostFriendlies"> Hosting Friendlies</label>
+                            <fieldset class="conditional">
+                                <div class="form-group smallText">
+                                    Friendlies location is automatically attatched to provided your user information when signing up.
+                                </div> 
+                            </fieldset>
+                        </li>
+                        <li><input type="radio" id="hostTourny" class="requirement" name="status" value="hostTourny"><label for="hostTourny"> Hosting Tournament</label>
+                            <fieldset class="conditional"> 
+                                <div class="form-group">
+                                    <ul>
+                                        <div class="form-group">
+                                            <li><input class="form-control" id="tournyTitle" type="text" name="tournyTitle" placeholder="Title of Tournament*" maxlength="32"></li>
+                                        </div>
+                                        <div class="form-group">
+                                            <select class="form-control" id="country" name="country">
+                                                <option value="" disabled selected hidden>Select Country*</option>
+                                            </select>
+                                            <select class="form-control" id="state" name="state">
+                                                <option value="" disabled selected hidden>Select State / Province*</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <input class="form-control" id="city" type="text" name="city" placeholder="City*" maxlength="16">
+                                            <input class="form-control" id="address" type="text" name="address" placeholder="Street Address*" maxlength="32">
+                                        </div>
+                                        <div class="form-group">
+                                            <li><input class="form-control" id="start" name="start" type="date" min="2017-01-01" max="2021-12-31"></li>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Tournament Prestige:*</label> <!-- "Local Tournament", "Regional Tournament", "Major", "Super Major" -->
+                                            <li><input type="radio" id="local" name="prestige" value="Local Tournament" checked><label for="local"> Local</label></li>
+                                            <li><input type="radio" id="regional" name="prestige" value="Regional Tournament"><label for="regional"> Regional</label></li>
+                                            <li><input type="radio" id="major" name="prestige" value="Major"><label for="major"> Major</label></li>
+                                            <li><input type="radio" id="supermajor" name="prestige" value="Super Major"><label for="supermajor"> Super Major</label></li>
+                                       </div>
+                                    </ul>
+                                </div>
+                            </fieldset>
+                        </li>            
+                    </ul>
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" id="information" name="information" cols="40" rows="5" placeholder="Provide all relevant information: e.g. contact info, schedule, fees, ruleset, links... etc*" maxlength="2048" required></textarea>
+                </div>
+                <p>
+                    <%  var firstDay = new Date();     
+                        var nextWeek = new Date(firstDay.getTime() + 7 * 24 * 60 * 60 * 1000); 
+                        var dateToPrint = nextWeek+"" %>
+                    Pinpoint will  <strong>expire: <%= dateToPrint.substring(0,15) %> </strong>(7 days from now)<br>                    
+                    Edit pinpoint to renew it for another week.
+                </p> 
+                <div class="veryVisibleDiv">
+                    <input id="termsOfService" type="checkbox" name="termsOfService" value="true"><label for="termsOfService">Do you agree to the <a href="/termsOfService">Terms</a> of Service?</label>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-lg btn-primary btn-block">Pinpoint</button>
+                </div>
+            </form>
+            
+            <a href="/locations" class="btn btn-link">Go Back</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    //Change required state for forms depending on radiobutton 
+    //By default: set seeking checked, so all fields have to start false above
+     $('#seeking').change(function() {
+		if(this.checked) {
+			$('#tournyTitle').prop('required', false);
+			$('#country').prop('required', false);
+			$('#state').prop('required', false);
+			$('#city').prop('required', false);
+			$('#address').prop('required', false);
+			$('#start').prop('required', false);
+		}
+	});
+    $('#hostFriendlies').change(function() {
+		if(this.checked) {
+			$('#tournyTitle').prop('required', false);
+			$('#country').prop('required', false);
+			$('#state').prop('required', false);
+			$('#city').prop('required', false);
+			$('#address').prop('required', false);
+			$('#start').prop('required', false);
+		}
+	});
+    $('#hostTourny').change(function() {
+		if(this.checked) {
+			$('#tournyTitle').prop('required', true);
+			$('#country').prop('required', true);
+			$('#state').prop('required', true);
+			$('#city').prop('required', true);
+			$('#address').prop('required', true);
+			$('#start').prop('required', true);
+		}
+	});                    
+	
+    $(document).ready(function(){
+        setMinMaxDate();
+    });
+</script>
+
+<% include ../partials/footer %>

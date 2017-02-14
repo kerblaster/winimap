@@ -1,0 +1,199 @@
+<% include ../partials/header %>
+    
+    <div class="container">
+        <header class="jumbotron">
+            <div class="container">
+                <h1>Search Results (<% if (currentUser){ %> <%=farLocations.length + locations.length%> <% } else{ %> <%=locations.length%> <% } %>) </h1>
+                <p>
+                    <% if (!currentUser){ %>
+                        Heatmap: All users for all games are mapped <br>
+                        Scan: All tournaments for all games are currently being displayed
+                    <% } else { %>
+                        <% if (currentUser.game === "ssb64"){ %>
+                            Filter Game: <strong>Smash 64</strong><br>
+                        <% } else if (currentUser.game === "ssbm"){ %>
+                            Filter Game: <strong>Smash Melee</strong><br>
+                        <% } else if (currentUser.game === "ssbb"){ %>
+                            Filter Game: <strong>Smash Brawl</strong><br>
+                        <% } else if (currentUser.game === "ssbpm"){ %>
+                            Filter Game: <strong>Project M</strong><br>
+                        <% } else if (currentUser.game === "ssb4"){ %>
+                            Filter Game: <strong>Smash 4</strong><br>
+                        <% } %>   
+                            Heatmap: Game's users are mapped<br>
+                            Scan: Game's friendlies within a 100 mile radius, and game's tournaments are currently being displayed
+                    <% } %>
+                </p>
+                <p>
+                    <a class="btn btn-primary btn-large" href="/locations/new">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Location
+                    </a>
+                </p>
+            </div>
+        </header>
+        
+        <!-- If logged in, 1st half -->
+        <% if (currentUser){ %>
+                <h4>Locations &lt;100 miles away (<%= locations.length %>)</h3>
+                <hr class="index_bar">
+                <% if (locations.length === 0){ %> <p>:( ... Looks like there is nothing happening nearby, add a location to bolster the scene around your area!</p> <% } %>
+        <% } else if (locations.length === 0){ %> <p>:( ... Looks like there are no tournaments happening soon, sign in to see if there are any people playing casuals around your area!</p> <% } %>
+        <div class="row" style="display:flex; flex-wrap: wrap;">
+            <% var i = 0; %>
+            <% locations.forEach(function(location) { %>
+                <div class="col-md-3 col-sm-6">
+                    <div class="thumbnail">
+                        <!-- Game --> 
+                        <img class="gameIcon" src=
+                            <% if (location.game === "ssb64"){ %>
+                                "/images/games/64_icon.png"
+                                title="Smash 64"
+                            <% } else if (location.game === "ssbm"){ %>
+                                "/images/games/melee_icon.png"
+                                title="Melee"
+                            <% } else if (location.game === "ssbb"){ %>
+                                "/images/games/brawl_icon.png"
+                                title="Brawl"
+                            <% } else if (location.game === "pm"){ %>
+                                "/images/games/pm_icon.png"
+                                title="PM"
+                            <% } else if (location.game === "ssb4"){ %>
+                                "/images/games/smash4_icon.png"
+                                title="Smash 4"
+                            <% } %>
+                        >
+                        <!-- Locations of nearby today or upcoming tournys/friendlies here --> 
+                        <% if (location.status === "seeking") { %>
+                            <img src="/images/status/seeking.png">
+                            <h2 class="truncate loc_header" title="Seeking Friendlies">Seeking Friendlies<span class="tournyPrestige" title="<%= location.author.tag %>"><%= location.author.tag %></span></h2>
+                            <hr>
+                            <p class="truncate loc_text">
+                                <%= location.city %>, <%= location.state %>
+                                <br><br>
+                            </p>
+                        
+                        <% } else if (location.status === "hostFriendlies") { %>
+                            <img src="/images/status/hostFriendlies.png">
+                            <h2 class="truncate loc_header" title="Hosting Friendlies">Hosting Friendlies<span class="tournyPrestige" title="<%= location.author.tag %>"><%= location.author.tag %></span></h2>
+                            <hr>
+                            <p class="truncate loc_text">
+                                <%= location.city %>, <%= location.state %>
+                                <br><br>
+                            </p>
+                            
+                         <% } else if (location.status === "hostTourny"){ %>
+                             <% if (location.prestige === "Local Tournament"){ %>
+                                 <img src="/images/status/local.png">
+                             <% }else if (location.prestige === "Regional Tournament"){ %>
+                                 <img src="/images/status/regional.png">
+                             <% }else if (location.prestige === "Major"){ %>
+                                 <img src="/images/status/major.png">
+                             <% }else if (location.prestige === "Super Major"){ %>
+                                 <img src="/images/status/supermajor.png">
+                             <% } %>
+                             <h2 class="truncate loc_header" title="<%= location.tournyTitle %>"><%= location.tournyTitle %><span class="tournyPrestige"><%= location.prestige %></span></h2>
+                             <hr>
+                             <p class="truncate loc_text">
+                                 <%= location.city %>, <%= location.state %> <br>
+                                 <%= location.start %>
+                             </p>
+                        <% } %> 
+                        <% if (currentUser){ %>
+                            <p class="truncate loc_text">
+                                <em><%= distances[i] %> miles away</em>  
+                            </p>
+                        <% } %>                        
+                        <p style="text-align: center;">
+                            <a href="/locations/<%= location._id %>" class="btn <% if (currentUser && location.author.id.equals(currentUser._id)){ %> btn-danger <% }else{ %>btn-primary <% } %>">
+                                <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Info
+                            </a>
+                        </p>
+                    </div>
+                </div>
+                <% i++ %>
+            <% }); %>
+        </div>
+        
+        <!-- If logged in, 2nd half -->
+        <% if (currentUser){ %>
+            <h4>Further locations (<%= farLocations.length %>)</h3>
+            <hr class="index_bar">
+            <div class="row" style="display:flex; flex-wrap: wrap;">
+                <% var i = 0; %>
+                <% farLocations.forEach(function(location) { %>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="thumbnail">
+                            <!-- Game --> 
+                            <img class="gameIcon" src=
+                                <% if (location.game === "ssb64"){ %>
+                                    "/images/games/64_icon.png"
+                                    title="Smash 64"
+                                <% } else if (location.game === "ssbm"){ %>
+                                    "/images/games/melee_icon.png"
+                                    title="Melee"
+                                <% } else if (location.game === "ssbb"){ %>
+                                    "/images/games/brawl_icon.png"
+                                    title="Brawl"
+                                <% } else if (location.game === "pm"){ %>
+                                    "/images/games/pm_icon.png"
+                                    title="PM"
+                                <% } else if (location.game === "ssb4"){ %>
+                                    "/images/games/smash4_icon.png"
+                                    title="Smash 4"
+                                <% } %>
+                            >
+                            <!-- Locations of nearby today or upcoming tournys/friendlies here --> 
+                            <% if (location.status === "seeking") { %>
+                                <img src="/images/status/seeking.png">
+                                <h2 class="truncate loc_header" title="Seeking Friendlies">Seeking Friendlies<span class="tournyPrestige" title="<%= location.author.tag %>"><%= location.author.tag %></span></h2>
+                                <hr>
+                                <p class="truncate loc_text">
+                                    <%= location.city %>, <%= location.state %>
+                                    <br><br>
+                                </p>
+                            
+                            <% } else if (location.status === "hostFriendlies") { %>
+                                <img src="/images/status/hostFriendlies.png">
+                                <h2 class="truncate loc_header" title="Hosting Friendlies">Hosting Friendlies<span class="tournyPrestige" title="<%= location.author.tag %>"><%= location.author.tag %></span></h2>
+                                <hr>
+                                <p class="truncate loc_text">
+                                    <%= location.city %>, <%= location.state %>
+                                    <br><br>
+                                </p>
+                                
+                             <% } else if (location.status === "hostTourny"){ %>
+                                 <% if (location.prestige === "Local Tournament"){ %>
+                                     <img src="/images/status/local.png">
+                                 <% }else if (location.prestige === "Regional Tournament"){ %>
+                                     <img src="/images/status/regional.png">
+                                 <% }else if (location.prestige === "Major"){ %>
+                                     <img src="/images/status/major.png">
+                                 <% }else if (location.prestige === "Super Major"){ %>
+                                     <img src="/images/status/supermajor.png">
+                                 <% } %>
+                                 <h2 class="truncate loc_header" title="<%= location.tournyTitle %>"><%= location.tournyTitle %><span class="tournyPrestige"><%= location.prestige %></span></h2>
+                                 <hr>
+                                 <p class="truncate loc_text">
+                                     <%= location.city %>, <%= location.state %> <br>
+                                     <%= location.start %>
+                                 </p>
+                            <% } %> 
+                            <% if (currentUser){ %>
+                                <p class="truncate loc_text">
+                                    <em><%= farDistances[i] %> miles away</em>  
+                                </p>
+                            <% } %>                        
+                            <p style="text-align: center;">
+                                <a href="/locations/<%= location._id %>" class="btn <% if (currentUser && location.author.id.equals(currentUser._id)){ %> btn-danger <% }else{ %>btn-primary <% } %>">
+                                    <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Info
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                    <% i++ %>
+                <% }); %>
+            </div>
+        <% } %>
+    </div>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhIPCZxFHwypX-_WeRzyoAOXi_ycyQR-0" type="text/javascript"></script>
+<% include ../partials/footer %>

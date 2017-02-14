@@ -1,0 +1,50 @@
+<% include ./partials/header %>
+<script type="text/javascript" src="/scripts/countries.js"></script>
+
+<h1>Register</h1>
+<div class="container">
+    <form action="/register" method="post" class="auth_form">
+        <!-- User -->
+        <input class="form-control" type="email" name="email" placeholder="email*" maxlength="32" required> 
+        <input class="form-control" type="password" name="password" placeholder="password*" required>  
+        <input class="form-control" type="text" name="tag" placeholder="tag/alias*" maxlength="16" required>
+        <br>
+        
+        <!-- Location -->
+        <div class="form-group">
+            <select class="form-control" id="country" name="country" required>
+                <option value="" disabled selected hidden>Select Country*</option>
+            </select>
+            <select class="form-control" id="state" name="state" required>
+                <option value="" disabled selected hidden>Select State / Province*</option>
+            </select>
+            <input class="form-control" id="city" type="text" name="city" placeholder="City*" required>
+            <input class="form-control" id="municipality" type="text" name="municipality" placeholder="Municipality/District/Precinct/Borough (Optional)">
+        </div>
+        
+        <!-- Game -->
+        <div class="form-group">
+            <select class="form-control" id="game" name="game" required>
+                <option value="" disabled selected hidden>Select Game of Focus*</option>
+                <option value="ssb64">Super Smash Bros. (N64)</option>
+                <option value="ssbm">Super Smash Bros. Melee (GC)</option>
+                <option value="ssbb">Super Smash Bros. Brawl (Wii)</option>
+                <option value="pm">Project M (Wii)</option>
+                <option value="ssb4">Smash 4 (Wii U)</option>
+            </select>
+        </div>
+        
+        <p class="smallText">
+            By signing up, you agree that you will provide honest information to the best of your ability. <br><br>
+            You also awknowledge that Winimap is not responsible for safety and accuracy of information provided.
+        </p>
+        <div class="veryVisibleDiv">
+            <input id="termsOfService" type="checkbox" name="termsOfService" value="true"><label for="termsOfService">Do you agree to the <a href="/termsOfService">Terms</a> of Service?</label>
+        </div>
+        <input type="submit" value="Sign Up" class="btn btn-primary btn-lg btn-block">
+        <a href="/login" class="btn btn-link">Already a user?</a>
+    </form>
+   
+</div>
+            
+<% include ./partials/footer %>

@@ -1,0 +1,64 @@
+<% include ../partials/header %>
+<link rel="stylesheet" href="/stylesheets/forms.css">
+<script type="text/javascript" src="/scripts/countries.js"></script>
+<script type="text/javascript" src="/scripts/locationFormScripts.js"></script>
+
+<div class="container">
+    <div class="row" style="text-align: center;">
+        <div class="col-md-3">
+            <p class="lead">Winimap</p>
+            <div class="list-group">
+                <a href="/" class="btn btn-default list-group-item" role="button">View world map</a>
+                <a href="/locations" class="btn btn-default list-group-item" role="button">Scan for nearby players</a>
+                <a href="/locations/new" class="btn btn-default list-group-item" role="button">Add new location</a>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <h1><%= user.username %></h1>
+            <p>User since: <%= user.created.toLocaleDateString() %></p>
+            
+            <div style="width: 50%; margin: 25px auto;">
+                <form action="/user/edit?_method=PUT" method="POST">
+                    <!-- User -->
+                    <input class="form-control" type="text" name="user[tag]" placeholder="tag/alias*" value="<%= user.tag %>" maxlength="16" required>
+                    <br>
+                    
+                    <!-- Location -->
+                    <div class="form-group">
+                        <select class="form-control" id="country" name="user[country]" required>
+                            <option value="<%= user.country %>" hidden selected><%= user.country %></option>
+                        </select>
+                        <select class="form-control" id="state" name="user[state]" required>
+                            <option id="firstStateOption" value="<%= user.state %>" hidden selected><%= user.state %></option>
+                        </select>
+                        <input class="form-control" id="city" type="text" name="user[city]" placeholder="City*" value="<%= user.city %>" maxlength="16" required>
+                        <input class="form-control" id="municipality" type="text" name="user[municipality]" placeholder="Municipality/District/Precinct/Borough (Optional)" value="<%= user.municipality %>" maxlength="16">
+                    </div>
+                    
+                    <div class="form-group">
+                        <select class="form-control" id="game" name="user[game]" required>
+                            <option value="ssb64" <% if (user.game === "ssb64"){ %> selected <% } %>>Super Smash Bros. (N64)</option>
+                            <option value="ssbm" <% if (user.game === "ssbm"){ %> selected <% } %>>Super Smash Bros. Melee (GC)</option>
+                            <option value="ssbb" <% if (user.game === "ssbb"){ %> selected <% } %>>Super Smash Bros. Brawl (Wii)</option>
+                            <option value="pm" <% if (user.game === "pm"){ %> selected <% } %>>Project M (Wii)</option>
+                            <option value="ssb4" <% if (user.game === "ssb4"){ %> selected <% } %>>Smash 4 (Wii U)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button class="btn btn-lg btn-primary btn-block">
+                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit User
+                        </button>
+                    </div>
+                </form>
+                <form id="delete-form" action="/user/edit?_method=DELETE" method="POST">
+                    <button class="btn btn-lg btn-danger pull-right">
+                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete User
+                    </button>
+                </form>
+            </div>            
+        </div>
+    </div>
+</div>
+
+<% include ../partials/footer %>

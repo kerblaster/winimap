@@ -1,0 +1,153 @@
+<% include partials/header %>
+    <!-- Jumbotron kinda -->
+    <div id="floatingPanel">
+        <div id="floatingIntro">
+            <h1>Welcome to Winimap!</h1>
+            <p>Sign up with your general location to plot yourself on the map</p>            
+        </div>
+        <a class="btn btn-info btn-lg" style="margin-right: 10px;" href="/locations">
+            <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Scan for nearby players
+        </a>
+        <a class="btn btn-primary btn-lg" href="/locations/new">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Location
+        </a>                
+    </div>
+    <!-- Google Map -->
+    <div id="map_full"></div> 
+    <script>
+        var map, heatmap;
+        var currentUser = null;
+        <% if (currentUser){ %>
+            currentUser = <%- JSON.stringify(currentUser) %>
+        <% } %>
+        var pointArray = new Array();
+        function initMap(){
+            map = new google.maps.Map(document.getElementById('map_full'), {
+                    zoom: 5,
+                    maxZoom: 13,
+                    minZoom: 4,
+                    center: new google.maps.LatLng(37.09024, -95.712899),
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    streetViewControl: false,
+                    mapTypeControl: false,
+            });
+            
+            heatmap = new google.maps.visualization.HeatmapLayer({
+               data: getAllPoints(),
+               map: map,
+               opacity: 0.5,
+               radius: 50,
+               gradient: [
+                    'rgba(255, 0, 0, 0)',
+                    'rgba(255, 255, 0, 0.9)',
+                    'rgba(0, 255, 0, 0.7)',
+                    'rgba(173, 255, 47, 0.5)',
+                    'rgba(152, 251, 152, 0)',
+                    'rgba(152, 251, 152, 0)',
+                    'rgba(0, 0, 238, 0.5)',
+                    'rgba(186, 85, 211, 0.7)',
+                    'rgba(255, 0, 255, 0.9)',
+                    'rgba(255, 0, 0, 1)'
+                    ]
+            });
+            
+            getAllMarkers();
+            
+            if (currentUser){
+                getUserData();                
+            }
+        }
+        
+        function getAllPoints(){
+                var i;
+                var latLngArray = new google.maps.MVCArray();
+                var allCoordsToMap = [<%= allCoords %>];
+                for (i = 0; i < allCoordsToMap.length; i += 2){
+                    latLngArray.push(new google.maps.LatLng(allCoordsToMap[i],allCoordsToMap[i+1]));    
+                }
+                return latLngArray;
+        }
+        
+        function getAllMarkers(){
+            var marker;
+            var i;
+            var allTournyLocToMap = <%- JSON.stringify(allTournyLoc) %>;
+            if (allTournyLocToMap.length === 0){
+                return 0;
+            }
+
+            for (i = 0; i < allTournyLocToMap.length; i++){
+                var image = "/images/pins/error.png"
+                if (allTournyLocToMap[i].prestige === "Local Tournament"){
+                    image = "/images/pins/building.png";
+                } else if (allTournyLocToMap[i].prestige === "Regional Tournament"){
+                    image = "/images/pins/city.png";
+                } else if (allTournyLocToMap[i].prestige === "Major"){
+                    image = "/images/pins/world.png";
+                } else if (allTournyLocToMap[i].prestige === "Super Major"){
+                    image = "/images/pins/star.png";;
+                }
+                marker = new google.maps.Marker({
+                   position: new google.maps.LatLng(allTournyLocToMap[i].lat, allTournyLocToMap[i].lng),
+                   map: map,
+                   title: allTournyLocToMap[i].tournyTitle + " (" + allTournyLocToMap[i].game + ")",
+                   icon: image
+                });
+         
+                var infowindow = new google.maps.InfoWindow({
+                    content: "loading..."
+                });
+                var data = allTournyLocToMap[i];
+                (function (marker, data) {
+                    google.maps.event.addListener(marker, "click", function (e) {
+                        map.setZoom(13);
+                        map.setCenter(marker.getPosition());
+                        infowindow.setContent(
+                            '<h2>'+data.tournyTitle+'<span class="tournyPrestige">'+data.prestige+'</span></h2>'+'<p>'+data.game+'<br>'+data.start+'</p>'
+                        );
+                        infowindow.open(map, marker);
+                    });
+                })(marker, data);
+            }
+        }
+        
+        function getUserData(){
+            userLocation = new google.maps.LatLng(currentUser.coord.lat, currentUser.coord.lng);
+            //set current location pin
+            var userMarker = new google.maps.Marker({
+               position: userLocation,
+               map: map,
+               title: "Specified location during sign up",
+               icon: "/images/pins/youarehere.png"
+            });
+            userMarker.setAnimation(google.maps.Animation.BOUNCE);
+            //set circle radius
+            var userCircle = new google.maps.Circle({
+                strokeColor: '#000000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#A9A9A9',
+                fillOpacity: 0,
+                map: map,
+                center: currentUser.coord,
+                radius: 160934
+            });
+            //set center
+            map.setCenter(userLocation);
+            //set zoom
+            map.setZoom(10);
+            //set onclick
+            google.maps.event.addListener(userMarker, "click", function (e) {
+                map.setCenter(userLocation);
+                map.setZoom(9);
+            });
+        }
+    </script>
+     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhIPCZxFHwypX-_WeRzyoAOXi_ycyQR-0&callback=initMap&libraries=visualization" type="text/javascript"></script>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<% include partials/footer %>
