@@ -38,7 +38,8 @@ var     commentRoutes       = require("./routes/comments"),
         
 //run every time server starts
 mongoose.Promise = global.Promise; //prevents deprication warning from mongodb
-mongoose.connect("mongodb://localhost/winimap");
+//mongoose.connect("mongodb://localhost/winimap");
+mongoose.connect("mongodb://kerblaster:wm2423Assm@ds023398.mlab.com:23398/winimap");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(sanitizer());
 app.set("view engine", "ejs");

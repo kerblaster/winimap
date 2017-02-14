@@ -147,6 +147,7 @@ router.post("/", middleware.isLoggedIn, function(req, res){
                     // update user
                     req.user.post = newLocation._id;
                     User.findByIdAndUpdate(req.user._id, req.user, function(err, updatedLocation){
+                        console.log("New location by " + updatedLocation.author.tag + ": " + updatedLocation.status + " at " + updatedLocation.state + ", " + updatedLocation.city);//DO NOT DELETE
                         //redirect back to location
                         req.flash("success", "Post Successfull!");
                         res.redirect("/locations");

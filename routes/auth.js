@@ -63,6 +63,7 @@ router.post("/register", function(req, res){
                    req.flash("error", reg_err.message); //username/email taken, empty field, etc..
                    return res.redirect("/register");
                } else{
+                      console.log("New user: " + user.tag + "(" + user.username + ")" + " from " + user.state + ", " + user.city + "[" + user.game + "]"); //DO NOT DELETE
                       req.flash("success", "Welcome, " + user.tag + "! You have successfully registered. Please login to continue...");
                       return res.redirect("/login");
                       /*
