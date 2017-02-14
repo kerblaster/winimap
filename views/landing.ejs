@@ -1,4 +1,11 @@
 <% include partials/header %>
+<script type="text/javascript">
+  <!--
+  if (screen.width <= 800) {
+    window.location = "/locations";
+  }
+  //-->
+</script>
     <!-- Jumbotron kinda -->
     <div id="floatingPanel">
         <div id="floatingIntro">
@@ -10,7 +17,11 @@
         </a>
         <a class="btn btn-primary btn-lg" href="/locations/new">
             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Location
-        </a>                
+        </a>
+        &nbsp;
+        <a class="btn btn-danger btn-lg" href="/about">
+            <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> 
+        </a>
     </div>
     <!-- Google Map -->
     <div id="map_full"></div> 
