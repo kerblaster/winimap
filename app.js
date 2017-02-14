@@ -38,8 +38,11 @@ var     commentRoutes       = require("./routes/comments"),
         
 //run every time server starts
 mongoose.Promise = global.Promise; //prevents deprication warning from mongodb
-//mongoose.connect("mongodb://localhost/winimap");
-mongoose.connect("mongodb://kerblaster:wm2423Assm@ds023398.mlab.com:23398/winimap");
+
+//dev DATABASEURL = "mongodb://localhost/winimap"
+//heroku DATABASEURL = "mongodb://kerblaster:wm2423Assm@ds023398.mlab.com:23398/winimap"
+mongoose.connect(process.env.DATABASEURL); //connects to dev or heroku database depending on environment variable
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(sanitizer());
 app.set("view engine", "ejs");
