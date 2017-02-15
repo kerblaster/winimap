@@ -98,6 +98,11 @@
                 </div>
             </form>
             <a href="/locations" class="btn btn-link">Go Back</a>
+            <form id="delete-form" action="/locations/<%= location._id %>?_method=DELETE" method="POST">
+                <button class="btn btn-lg btn-danger pull-right">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
+                </button>
+            </form>            
         </div>
     </div>
 </div>

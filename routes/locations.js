@@ -146,8 +146,8 @@ router.post("/", middleware.isLoggedIn, function(req, res){
                 } else{
                     // update user
                     req.user.post = newLocation._id;
-                    User.findByIdAndUpdate(req.user._id, req.user, function(err, updatedLocation){
-                        console.log("New location by " + updatedLocation.author.tag + ": " + updatedLocation.status + " at " + updatedLocation.state + ", " + updatedLocation.city);//DO NOT DELETE
+                    User.findByIdAndUpdate(req.user._id, req.user, function(err, updatedUser){
+                        console.log("New location by " + newLocation.author.tag + ": " + newLocation.status + " at " + newLocation.city + ", " + newLocation.state);//DO NOT DELETE
                         //redirect back to location
                         req.flash("success", "Post Successfull!");
                         res.redirect("/locations");
@@ -242,6 +242,7 @@ router.put("/:id", middleware.checkLocationOwnership, function(req, res){
                     res.redirect("/locations");
                 } else{
                     //redirect to SHOW page
+                    console.log("Edited location by " + updatedLocation.author.tag + ": " + updatedLocation.status + " at " + updatedLocation.city + ", " + updatedLocation.state);//DO NOT DELETE
                     req.flash("success", "Update Successfull!");
                     res.redirect("/locations/" + req.params.id);
                 }
