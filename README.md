@@ -5,7 +5,8 @@ Its second function is to match smashers around the world with other smashers wh
 
 Tournament organizers can also use Winimap to promote their tournament. They can post their tournament and its location will be pinned onto the heatmap as well as posted as a search results for scans.
 
-*How to use:*
+How to use:
+
 Homepage - Heatmap (desktop)
 
 Shows population density of the people who signed up. It uses an color gradient to display lesser and greater population areas. By default (signed out), the heatmap focuses on the United States and displays every smasher from every game. It also shows pins of all tournaments. You can hover over a pin of a tournament to find its title and the game played. Different pin icons represent tournament prestige, reference the specific pin icon below. You can further click the pin to find a short summary of it. If logged in, it will show a jumping pin of where you are closely located and a black 100 mile radius for reference. The zoom and center also focus on your location. Click at the jumping pin to re-center. Note, this does not pin any local friendlies.
